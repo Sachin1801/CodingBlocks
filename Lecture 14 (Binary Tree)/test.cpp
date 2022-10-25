@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 using namespace std;
 
 class node
@@ -135,33 +136,149 @@ node *search(node *root, int key)
     return search(root->right, key);
 }
 
+void mirror(node *root)
+{
+    if (!root)
+        return;
+
+    swap(root->left, root->right);
+
+    mirror(root->left);
+    mirror(root->right);
+}
+
+void levelOrder(node *root)
+{
+    queue<node *> q;
+    q.push(root);
+    q.push(NULL);
+
+    while (!q.empty())
+    {
+        node *f = q.front();
+        q.pop();
+
+        if (f != NULL)
+        {
+            cout << f->data << " ";
+            if (f->left)
+                q.push(f->left);
+            if (f->right)
+                q.push(f->right);
+        }
+        else
+        {
+            cout << endl;
+            if (!q.empty())
+                q.push(NULL);
+        }
+    }
+}
+
+node *levelOrderBuild()
+{
+    int data;
+    cout << "enter root data:- ";
+    cin >> data;
+
+    if (data == -1)
+        return NULL;
+
+    node *root = new node(data);
+    queue<node *> q;
+    q.push(root);
+    while (!q.empty())
+    {
+        node *f = q.front();
+        q.pop();
+        cout << "Enter the children of " << f->data << " :- ";
+        int l, r;
+        cin >> l >> r;
+
+        if (l != -1)
+        {
+            f->left = new node(l);
+            q.push(f->left);
+        }
+        if (r != -1)
+        {
+            f->right = new node(r);
+            q.push(f->right);
+        }
+    }
+    return root;
+}
+
+int pre[] = {8, 10, 1, 6, 4, 7, 3, 14, 13};
+int k = 0;
+int in[] = {1, 10, 4, 6, 7, 8, 3, 13, 14};
+
+node *makeTree(int *in, int s, int e)
+{
+    // base case
+    if (s > e)
+        return NULL;
+
+    // rec case
+    node *root = new node(pre[k++]);
+    int i = -1;
+    for (int j = s; j <= e; j++)
+    {
+        if (in[j] == root->data)
+        {
+            i = j;
+            break;
+        }
+    }
+    root->left = makeTree(in, s, i - 1);
+    root->right = makeTree(in, i + 1, e);
+    return root;
+}
+
 int main()
 {
     // input - 8 10 1 -1 -1 6 4 -1 -1 7 -1 -1 3 -1 14 13 -1 -1 -1
-    node *root = createTree();
+    // node *root = levelOrderBuild();
 
-    preorder(root);
-    cout << endl;
+    // preorder(root);
+    // cout << endl;
 
-    inorder(root);
-    cout << endl;
+    // inorder(root);
+    // cout << endl;
 
-    postorder(root);
-    cout << endl;
+    // postorder(root);
+    // cout << endl;
 
-    cout << "Total Nodes: " << countNodes(root) << endl;
-    cout << "Tree height: " << height(root) << endl;
-    cout << "Diameter of Tree is : " << diameter(root) << endl;
-    pair<int, int> ans = fastDiameter(root);
+    // cout << "Total Nodes: " << countNodes(root) << endl;
+    // cout << "Tree height: " << height(root) << endl;
+    // cout << "Diameter of Tree is : " << diameter(root) << endl;
+    // pair<int, int> ans = fastDiameter(root);
 
-    cout << "Height of Tree is : " << ans.first << " and Diameter of Tree is: " << ans.second << endl;
-    int key;
-    cin >> key;
-    node *a = search(root, key);
-    if (a)
-        cout << a->data << endl;
-    else
-        cout << "Not present\n";
+    // cout << "Height of Tree is : " << ans.first << " and Diameter of Tree is: " << ans.second << endl;
+    // int key;
+    // cin >> key;
+    // node *a = search(root, key);
+    // if (a)
+    //     cout << a->data << endl;
+    // else
+    //     cout << "Not present\n";
+
+    // mirror(root);
+
+    // preorder(root);
+    // cout << endl;
+
+    // inorder(root);
+    // cout << endl;
+
+    // postorder(root);
+    // cout << endl;
+
+    // levelOrder(root);
+
+    node *newroot = makeTree(in, 0, 8);
+
+    levelOrder(newroot);
 
     return 0;
 }
